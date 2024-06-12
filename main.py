@@ -1,6 +1,8 @@
 from configs.config import Config
-from bots.bot import Bot
+from app.bot import Bot
+from app.handler import Handler
 import logging
+import asyncio
 
 logger = logging.basicConfig(filename='bot.log', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -8,7 +10,7 @@ logger = logging.getLogger(__name__)
 def main():
     cfg = Config()
 
-    bot = Bot(cfg.bot_token, cfg.localization_dict)
+    bot = Bot(Handler(cfg.localization_dict), cfg.bot_token)
 
     logger.info('Bot started...')
     bot.run()

@@ -1,24 +1,8 @@
 {
     "en": {
-        "help_description": "Show help information",
-        "reset_description": "Reset the bot",
-        "resend_description": "Resend the last message",
-        "start_message": "Hi, I'm a bot. Type /help for more info.",
-        "help_message": "Here are the available commands:\n/help - Show help information\n/reset - Reset the bot\n/resend - Resend the last message\n/set_language - Set your preferred language",
-        "reset_message": "Bot has been reset.",
-        "resend_message": "Last message has been resent.",
-        "choose_language": "Choose your preferred language.",
-        "language_set": "Language has been set."
+        "start_message": "Hi, i am help you to make life better!"
     },
     "uk": {
-        "help_description": "Показати інформацію допомоги",
-        "reset_description": "Скинути бота",
-        "resend_description": "Повторно надіслати останнє повідомлення",
-        "start_message": "Привіт, я бот. Напишіть /help для отримання додаткової інформації.",
-        "help_message": "Ось доступні команди:\n/help - Показати інформацію допомоги\n/reset - Скинути бота\n/resend - Повторно надіслати останнє повідомлення\n/set_language - Встановити бажану мову",
-        "reset_message": "Бот був скинутий.",
-        "resend_message": "Останнє повідомлення було повторно надіслано.",
-        "choose_language": "Будь ласка, оберіть свою мову:\n/en - English\n/uk - Українська",
-        "language_set": "Мова була встановлена."
+        "start_message": "Привіт, я допоможу тобі покращити життя"
     }
 }
