@@ -1,1 +1,5 @@
 .env
+env
+configs/__pycache__
+bots/__pycache__
+bot.log
