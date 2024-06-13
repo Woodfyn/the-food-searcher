@@ -11,7 +11,7 @@ class Handler:
         user_id = update.message.from_user.id
         self.step[user_id] = 'height'
         await update.message.reply_text("Hi, I am here to help you make life better!")
-        await update.message.reply_text("Enter your height in cm")
+        await update.message.reply_text("Enter your height in cm (whole number)")
 
     async def handle_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id = update.message.from_user.id
@@ -19,17 +19,23 @@ class Handler:
 
         if step == 'height':
             height = update.message.text
-            self.step[user_id] = 'weight'
-            await update.message.reply_text("Enter your weight in kg")
-            context.user_data['height'] = height
+            if height.isdigit() and 40 <= int(height) <= 250:
+                context.user_data['height'] = height
+                self.step[user_id] = 'weight'
+                await update.message.reply_text("Enter your weight in kg (whole number)")
+            else:
+                await update.message.reply_text("Enter your height in cm correctly")
+
         elif step == 'weight':
             weight = update.message.text
-            self.step[user_id] = 'user_id'
-            await update.message.reply_text("Enter your user ID")
-            context.user_data['weight'] = weight
-        elif step == 'user_id':
-            user_id = update.message.from_user.id
-            height = context.user_data.get('height')
-            weight = context.user_data.get('weight')
-            await update.message.reply_text(f"Received data: Height - {height} cm, Weight - {weight} kg, User ID - {user_id}")
-            self.step.pop(user_id, None)
+            if weight.isdigit() and 4 <= int(weight) <= 560:
+                context.user_data['weight'] = weight
+
+                height = context.user_data.get('height', 'not provided')
+                weight = context.user_data.get('weight', 'not provided')
+
+                await update.message.reply_text(f"Received data: Height - {height} cm, Weight - {weight} kg, User ID - {user_id}")
+
+                self.step.pop(user_id, None)
+            else:
+                await update.message.reply_text("Enter your weight in kg correctly")
