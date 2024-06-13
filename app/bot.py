@@ -1,6 +1,7 @@
 from telegram import BotCommand
-from telegram.ext import ApplicationBuilder, Application, CommandHandler
+from telegram.ext import ApplicationBuilder, Application, CommandHandler, MessageHandler, filters
 from .handler import Handler
+
 
 class Bot:
     def __init__(self, handler: Handler, token: str):
@@ -15,9 +16,11 @@ class Bot:
 
     def run(self):
         application = ApplicationBuilder() \
-        .token(self.token) \
-        .post_init(self.post_init) \
-        .build()
+            .token(self.token) \
+            .post_init(self.post_init) \
+            .build()
 
         application.add_handler(CommandHandler('start', self.handler.start))
+        application.add_handler(MessageHandler(
+            filters.TEXT & ~filters.COMMAND, self.handler.handle_message))
         application.run_polling()
