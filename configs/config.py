@@ -12,6 +12,8 @@ class Config:
         
         with open('localization.json', 'r', encoding='utf-8') as f:
             self.localization_dict = json.load(f)
+        
+        self.mongo_uri = os.getenv('MONGO_URI')
 
     def __str__(self):
         return f"Config(bot_token={self.bot_token}, localization_dict={self.localization_dict})"

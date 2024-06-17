@@ -4,3 +4,4 @@ configs/__pycache__
 app/__pycache__
 bot.log
 .vscode
+.data
