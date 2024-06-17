@@ -1,5 +1,7 @@
 .env
 env
 configs/__pycache__
-bots/__pycache__
+app/__pycache__
 bot.log
+.vscode
+.data

@@ -1,14 +1,20 @@
 from configs.config import Config
-from bots.bot import Bot
+from app.bot import Bot
+from app.handler import Handler
+from app.mongo import Mongo
 import logging
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
-logger = logging.basicConfig(filename='bot.log', level=logging.INFO)
+logging.basicConfig(filename='bot.log', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def main():
     cfg = Config()
 
-    bot = Bot(cfg.bot_token, cfg.localization_dict)
+    client = MongoClient(cfg.mongo_uri, server_api=ServerApi('1'))
+
+    bot = Bot(Handler(cfg.localization_dict, Mongo(client)), cfg.bot_token)
 
     logger.info('Bot started...')
     bot.run()
