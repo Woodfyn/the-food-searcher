@@ -1,19 +1,33 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, CallbackQuery
-from telegram.ext import ContextTypes
+from telegram import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Update,
+    CallbackQuery,
+    ReplyKeyboardMarkup,
+)
+from telegram.ext import (
+    ContextTypes,
+    CallbackContext,
+    CommandHandler,
+    MessageHandler,
+    filters
+)    
 from .utils import calculate_plan
 from .mongo import Mongo
 
 INPUT_PLAN = '1'
 CALCULATE_PLAN = '2'
 
+MENU_ADD_FOOD = '1'
+MENU_UPDATE_DATA = '2'
+
 class Handler:
     def __init__(self, localization_dict: dict, mongo: Mongo, default_localization='en'):
         self.default_localization = default_localization
         self.localization_dict = localization_dict
         self.step = {}
-
         self.mongo = mongo
-
+        
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id = update.message.from_user.id
 
@@ -26,6 +40,19 @@ class Handler:
             self.step[user_id] = 'height'
             await update.message.reply_text("Hi, I am here to help you make life better!")
             await update.message.reply_text("Enter your height in cm.\nExample ➜ Height: 184.0 or 165.6")
+
+    async def _update_data(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        user_id = update.message.from_user.id
+
+        try:
+            self.mongo.delete_user_by_id(user_id)
+
+            self.step[user_id] = 'height'
+            await update.message.reply_text("Enter your height in cm.\nExample ➜ Height: 184.0 or 165.6")
+
+            await self.handle_message(update, context)
+        except Exception as e:
+            await update.message.reply_text(f"Error: {e}")
 
     async def handle_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id = update.message.from_user.id
@@ -138,8 +165,6 @@ class Handler:
             reply_markup=reply_markup
         )
 
-        self.step[user_id] = 'plan'
-
     async def handle_plan(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         await query.answer()
@@ -198,12 +223,41 @@ class Handler:
         except Exception as e:
             await update.message.reply_text(f'Error storing user data: {e}')
 
-    async def menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async def menu(self, update: Update, context: CallbackContext):
         user_id = update.message.from_user.id
 
         user_data = await self.mongo.get_user_by_id(user_id)
 
         if user_data:
-            await update.message.reply_text(f"You are on the menu!")
+            buttons = [
+                [InlineKeyboardButton('Add food', callback_data=MENU_ADD_FOOD)],
+                [InlineKeyboardButton('Update data', callback_data=MENU_UPDATE_DATA)],
+            ]
+
+            reply_markup = InlineKeyboardMarkup(buttons)
+            await update.message.reply_text(
+                'What do you want to do?',
+                reply_markup=reply_markup
+            )
         else:
-            await update.message.reply_text(f"Please start the bot!")
+            await update.message.reply_text('Please start the bot!')
+
+    async def button_callback(self, update: Update, context: CallbackContext):
+        query = update.callback_query
+        await query.answer()
+
+        user_id = query.from_user.id
+        choose = query.data
+
+        if choose == MENU_ADD_FOOD:
+            await query.edit_message_text("Please enter your food name.\nExample ➜ Apple")
+            self._add_food(update, context)
+
+        elif choose == MENU_UPDATE_DATA:
+            await query.edit_message_text("Updating your data...")
+            await self._update_data(update, context)
+
+        
+
+    async def _add_food(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        await update.message.reply_text('Sent food name: ' + update.message.text)

@@ -21,3 +21,6 @@ class Mongo:
 
     async def get_user_by_id(self, user_id: int):
         return self.user_collection.find_one({'_id': user_id})
+
+    async def delete_user_by_id(self, user_id: int):
+        self.user_collection.delete_one({'_id': user_id})
