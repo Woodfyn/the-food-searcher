@@ -29,5 +29,6 @@ class Bot:
         application.add_handler(CallbackQueryHandler(self.handler.handle_factor, pattern='^1\.2|1\.375|1\.55|1\.725|1\.9$'))
         application.add_handler(CallbackQueryHandler(self.handler.handle_plan))
         application.add_handler(CommandHandler('menu', self.handler.menu))
+        application.add_handler(CallbackQueryHandler(self.handler.button_callback))
 
         application.run_polling()
